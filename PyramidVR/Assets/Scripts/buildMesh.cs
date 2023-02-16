@@ -32,7 +32,6 @@ public class buildMesh : MonoBehaviour
 
     private rayRender ray;
     
-    //private CharacterController chara;
 
 
     void getDevice()
@@ -47,29 +46,14 @@ public class buildMesh : MonoBehaviour
 
     void Start()
     {
-
-        //chara = s.GetComponent<CharacterController>();
-        //InputDeviceCharacteristics rightConChar = InputDeviceCharacteristics.Right | InputDeviceCharacteristics.Controller;
-        //InputDevices.GetDevicesWithCharacteristics(rightConChar, devices);
-
+        Debug.Log(GameObject.Find("CubeR"));
         ray = rightController.GetComponent<rayRender>();
 
-        //Make cursor visible
-        Cursor.visible = true;
+       
 
         MeshFilter mf = GetComponent<MeshFilter>();
         mesh = mf.mesh;
         
-
-
-        /*
-        mesh.Clear();
-        mesh.vertices = vertices;
-        mesh.triangles = tringles;
-        //mesh.uv = uvs;
-        mesh.Optimize();
-        mesh.RecalculateNormals();
-        */
         meshInitiliazation(mesh);
         Volume = VolumeOfMesh(mesh);
 
@@ -92,42 +76,19 @@ public class buildMesh : MonoBehaviour
         if (Input.GetMouseButton(0) | primaryButtonValue)
         {
 
-            /*
-            screenPosition = Input.mousePosition;
-            screenPosition.z = Camera.main.nearClipPlane + 1;
-            worldPosition = Camera.main.ScreenToWorldPoint(screenPosition);
-            vert2 = Vector3.Lerp(vert2, worldPosition, Time.deltaTime);
-            vert3 = Vector3.Lerp(vert3, worldPosition, Time.deltaTime);
-            vert4 = Vector3.Lerp(vert4, worldPosition, Time.deltaTime);
-            vert5 = Vector3.Lerp(vert5, worldPosition, Time.deltaTime);
-            */
             Vector3 vec = new Vector3(ray.point.x, ray.point.y, ray.point.z);
             //Vector3 vec = new Vector3(s.transform.position.x, s.transform.position.y, s.transform.position.z);
             vert2 = Vector3.Lerp(vert2, vec, Time.deltaTime);
             vert3 = Vector3.Lerp(vert3, vec, Time.deltaTime);
             vert4 = Vector3.Lerp(vert4, vec, Time.deltaTime);
             vert5 = Vector3.Lerp(vert5, vec, Time.deltaTime);
+            s.transform.position = Vector3.Lerp(s.transform.position, vec, Time.deltaTime);
 
-            //Vector3 vec = cam.ScreenToWorldPoint(new Vector3(s.transform.position.x, s.transform.position.y, s.transform.position.z));
-            //Vector3 vec = new Vector3(s.transform.position.x, s.transform.position.y, s.transform.position.z);
-            //vert2 = Vector3.Lerp(vert2, vec, Time.deltaTime);
-            //vert3 = Vector3.Lerp(vert3, vec, Time.deltaTime);
-            //vert4 = Vector3.Lerp(vert4, vec, Time.deltaTime);
-            //vert5 = Vector3.Lerp(vert5, vec, Time.deltaTime);
-
-            /*
-            worldPosition = cam.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, -cam.transform.position.z));
-            vert2 = Vector3.Lerp(vert2, worldPosition, Time.deltaTime);
-            vert3 = Vector3.Lerp(vert3, worldPosition, Time.deltaTime);
-            vert4 = Vector3.Lerp(vert4, worldPosition, Time.deltaTime);
-            vert5 = Vector3.Lerp(vert5, worldPosition, Time.deltaTime);
-            */
 
             meshInitiliazation(mesh);
             finalVolume = VolumeOfMesh(mesh);
             if (Volume == finalVolume)
             {
-                Debug.Log("naiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii");
                 meshPyramid.GetComponent<MeshRenderer>().material = Green;
             }
             else
@@ -158,7 +119,7 @@ public class buildMesh : MonoBehaviour
             new Vector3 (0, 0, 1),
         };
 
-        //Triangles 3 points, clockwise determines which side is visible
+        //Triangles 
         int[] tringles = new int[]
         {
             0, 2, 1, //face front
@@ -179,7 +140,6 @@ public class buildMesh : MonoBehaviour
         mesh.Clear();
         mesh.vertices = vertices;
         mesh.triangles = tringles;
-        //mesh.uv = uvs;
         mesh.Optimize();
         mesh.RecalculateNormals();
     }
@@ -210,7 +170,8 @@ public class buildMesh : MonoBehaviour
             Vector3 p3 = vertices[triangles[i + 2]];
             volume += SignedVolumeOfTriangle(p1, p2, p3);
         }
-        volume = Mathf.Round(volume * 10.0f) * 0.1f;
+        //volume = Mathf.Round(volume * 10.0f) * 0.1f;
+        volume = Mathf.Floor(10 * volume) / 10;
         return Mathf.Abs(volume);
     }
 }
